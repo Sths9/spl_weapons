@@ -125,8 +125,18 @@ button#executeButton:hover {
   }
 
   .weapon-cell {
-    width: 150px;
-    height: 180px;
+    width: 45%; /* 2列に収まるように % 指定 */
+    height: auto;
+    margin: 5px auto;
+    display: inline-block; /* 横並びを防ぐ */
+  }
+
+  table, tr {
+    display: block; /* テーブルを縦スクロールできるブロック表示に */
+  }
+
+  tr {
+    margin-bottom: 10px;
   }
 
   img.weapon-img {

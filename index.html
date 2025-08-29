@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>武器ルーレット</title>
+<style>
+    body {
+    text-align: center; /* 全体を中央寄せ */
+    font-family: sans-serif;
+  }
+
+  table {
+  border-collapse: collapse;
+  margin-top: 20px;
+  width: 100%;
+  table-layout: fixed; /* これを追加すると列幅が固定される */
+}
+
+  td, th {
+  border: 1px solid #333;
+  text-align: center;
+}
+
+  input[type="text"] {
+    width: 150px;
+    padding: 5px;
+    margin: 5px;
+    display: inline-block; /* 横に並べつつ中央寄せ */
+    text-align: center;
+  }
+
+  button {
+    width: 100%;       /* 実行ボタンを横幅いっぱい */
+    max-width: 400px;  /* 最大幅を制限して見やすく */
+    padding: 15px;
+    font-size: 18px;
+    margin: 10px auto; /* 上下余白、中央寄せ */
+    display: block;    /* 中央寄せにするためブロック要素化 */
+    cursor: pointer;
+  }
+
+  label {
+    font-size: 16px;
+    margin: 5px;
+    display: inline-block;
+  }
+
+  .player-name {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+  }
+.alpha, .bravo {
+  font-weight: bold;
+  text-align: center;
+  background-color: #FFD700; /* alpha */
+  /* 幅や高さは自動 */
+}
+
+.bravo {
+  background-color: #1e6ebd;
+}
+  
+img.weapon-img {
+  display: block;
+  margin: 5px auto 0;
+  max-width: 100px;
+  max-height: 80px;
+  height: auto;
+}
+
+.weapon-buttons {
+  text-align: center;      /* 親要素で中央寄せ */
+}
+
+.weapon-buttons button {
+  display: inline-block;   /* ボタンをインライン要素として扱う */
+  margin: 0 5px;           /* ボタン間の間隔を固定 */
+}
+
+/* 武器セル用 */
+.weapon-cell {
+  width: 180px;
+  height: 150px;
+  padding: 10px;
+  overflow: hidden;
+}
+
+/* チーム見出しセル用 */
+.team-header {
+  padding: 10px;
+  font-weight: bold;
+  /* 幅や高さは自動 */
+}
+
+button#executeButton {
+  background-color: #aa33ff; /* 目立つ青 */
+  color: white;              /* 文字色は白 */
+  font-weight: bold;          /* 太字 */
+  padding: 15px 20px;         /* 少し大きめに */
+  font-size: 18px;            /* 大きめの文字 */
+  border: none;               /* 枠線なし */
+  border-radius: 5px;         /* 角丸 */
+  cursor: pointer;            /* ホバーで指マーク */
+  width: 100%;                /* ページ横幅いっぱい */
+  margin-top: 10px;
+}
+
+/* ホバー時に少し明るく */
+button#executeButton:hover {
+  background-color: #8000FF;
+}
+
+</style>
+</head>
+<body>
+
+<h1>武器ルーレット</h1>
+
+<!-- プレイヤー名入力欄 -->
+<div>
+  <input type="text" id="player1" placeholder="プレイヤー1">
+  <input type="text" id="player2" placeholder="プレイヤー2">
+  <input type="text" id="player3" placeholder="プレイヤー3">
+  <input type="text" id="player4" placeholder="プレイヤー4">
+  <br>
+  <input type="text" id="player5" placeholder="プレイヤー5">
+  <input type="text" id="player6" placeholder="プレイヤー6">
+  <input type="text" id="player7" placeholder="プレイヤー7">
+  <input type="text" id="player8" placeholder="プレイヤー8">
+</div>
+
+<br>
+
+<label>
+  <input type="checkbox" id="noDuplicate"> 武器が被らないようにする
+</label>
+<br>
+<label>
+  <input type="checkbox" id="teamMode"> チーム構成も決める
+</label>
+<br><br>
+
+<h3>武器種を限定（複数選択可）</h3>
+
+<div class="weapon-buttons">
+  <button type="button" onclick="selectAllWeaponTypes()">全て選択</button>
+  <button type="button" onclick="deselectAllWeaponTypes()">全て選択解除</button>
+</div>
+<br>
+
+<label><input type="checkbox" class="weaponType" value="シューター" checked> シューター</label>
+<label><input type="checkbox" class="weaponType" value="ブラスター" checked> ブラスター</label>
+<label><input type="checkbox" class="weaponType" value="ローラー" checked> ローラー</label>
+<label><input type="checkbox" class="weaponType" value="フデ" checked> フデ</label>
+<label><input type="checkbox" class="weaponType" value="チャージャー" checked> チャージャー</label>
+<label><input type="checkbox" class="weaponType" value="スロッシャー" checked> スロッシャー</label>
+<label><input type="checkbox" class="weaponType" value="スピナー" checked> スピナー</label>
+<label><input type="checkbox" class="weaponType" value="マニューバー" checked> マニューバー</label>
+<label><input type="checkbox" class="weaponType" value="シェルター" checked> シェルター</label>
+<label><input type="checkbox" class="weaponType" value="ストリンガー" checked> ストリンガー</label>
+<label><input type="checkbox" class="weaponType" value="ワイパー" checked> ワイパー</label>
+
+<br><br>
+<!-- ランダム決定ボタンは独立 -->
+<button id="executeButton" onclick="generateWeapons()">実行</button>
+
+<table id="weaponTable">
+  <tbody id="tableBody">
+    <!-- ここに動的に内容を表示 -->
+  </tbody>
+</table>
+
+<script>
+const weapons = [
+  {No:1, name:"スプラシューター", type:"シューター"},
+  {No:2, name:"スプラシューターコラボ", type:"シューター"},
+  {No:3, name:"スプラシューター煌", type:"シューター"},
+  {No:4, name:".96ガロン", type:"シューター"},
+  {No:5, name:".96ガロンデコ", type:"シューター"},
+  {No:6, name:".96ガロン爪", type:"シューター"},
+  {No:7, name:"シャープマーカー", type:"シューター"},
+  {No:8, name:"シャープマーカーネオ", type:"シューター"},
+  {No:9, name:"シャープマーカーGECK", type:"シューター"},
+  {No:10, name:"わかばシューター", type:"シューター"},
+  {No:11, name:"もみじシューター", type:"シューター"},
+  {No:12, name:".52ガロン", type:"シューター"},
+  {No:13, name:".52ガロンデコ", type:"シューター"},
+  {No:14, name:"H3リールガン", type:"シューター"},
+  {No:15, name:"H3リールガンD", type:"シューター"},
+  {No:16, name:"H3リールガンSNAK", type:"シューター"},
+  {No:17, name:"L3リールガン", type:"シューター"},
+  {No:18, name:"L3リールガンD", type:"シューター"},
+  {No:19, name:"L3リールガン箔", type:"シューター"},
+  {No:20, name:"N-ZAP85", type:"シューター"},
+  {No:21, name:"N-ZAP89", type:"シューター"},
+  {No:22, name:"ジェットスイーパー", type:"シューター"},
+  {No:23, name:"ジェットスイーパーカスタム", type:"シューター"},
+  {No:24, name:"ジェットスイーパーCOBR", type:"シューター"},
+  {No:25, name:"プライムシューター", type:"シューター"},
+  {No:26, name:"プライムシューターコラボ", type:"シューター"},
+  {No:27, name:"プライムシューターFRZN", type:"シューター"},
+  {No:28, name:"プロモデラーMG", type:"シューター"},
+  {No:29, name:"プロモデラーRG", type:"シューター"},
+  {No:30, name:"プロモデラー彩", type:"シューター"},
+  {No:31, name:"ボールドマーカー", type:"シューター"},
+  {No:32, name:"ボールドマーカーネオ", type:"シューター"},
+  {No:33, name:"ボトルガイザー", type:"シューター"},
+  {No:34, name:"ボトルガイザーフォイル", type:"シューター"},
+  {No:35, name:"スペースシューター", type:"シューター"},
+  {No:36, name:"スペースシューターコラボ", type:"シューター"},
+  {No:37, name:"ロングブラスター", type:"ブラスター"},
+  {No:38, name:"ホットブラスター", type:"ブラスター"},
+  {No:39, name:"ホットブラスターカスタム", type:"ブラスター"},
+  {No:40, name:"ホットブラスター艶", type:"ブラスター"},
+  {No:41, name:"クラッシュブラスター", type:"ブラスター"},
+  {No:42, name:"クラッシュブラスターネオ", type:"ブラスター"},
+  {No:43, name:"Rブラスターエリート", type:"ブラスター"},
+  {No:44, name:"Rブラスターエリートデコ", type:"ブラスター"},
+  {No:45, name:"RブラスターエリートWNTR", type:"ブラスター"},
+  {No:46, name:"ノヴァブラスター", type:"ブラスター"},
+  {No:47, name:"ノヴァブラスターネオ", type:"ブラスター"},
+  {No:48, name:"ラピッドブラスター", type:"ブラスター"},
+  {No:49, name:"ラピッドブラスターデコ", type:"ブラスター"},
+  {No:50, name:"S-BLAST92", type:"ブラスター"},
+  {No:51, name:"S-BLAST91", type:"ブラスター"},
+  {No:52, name:"ロングブラスターカスタム", type:"ブラスター"},
+  {No:53, name:"ダイナモローラー", type:"ローラー"},
+  {No:54, name:"ダイナモローラーテスラ", type:"ローラー"},
+  {No:55, name:"ダイナモローラー冥", type:"ローラー"},
+  {No:56, name:"スプラローラー", type:"ローラー"},
+  {No:57, name:"スプラローラーコラボ", type:"ローラー"},
+  {No:58, name:"ヴァリアブルローラー", type:"ローラー"},
+  {No:59, name:"ヴァリアブルローラーフォイル", type:"ローラー"},
+  {No:60, name:"カーボンローラー", type:"ローラー"},
+  {No:61, name:"カーボンローラーデコ", type:"ローラー"},
+  {No:62, name:"カーボンローラーANGL", type:"ローラー"},
+  {No:63, name:"ワイドローラー", type:"ローラー"},
+  {No:64, name:"ワイドローラーコラボ", type:"ローラー"},
+  {No:65, name:"ワイドローラー惑", type:"ローラー"},
+  {No:66, name:"パブロ", type:"フデ"},
+  {No:67, name:"パブロ・ヒュー", type:"フデ"},
+  {No:68, name:"ホクサイ", type:"フデ"},
+  {No:69, name:"ホクサイ・ヒュー", type:"フデ"},
+  {No:70, name:"ホクサイ彗", type:"フデ"},
+  {No:71, name:"フィンセント", type:"フデ"},
+  {No:72, name:"フィンセント・ヒュー", type:"フデ"},
+  {No:73, name:"フィンセントBRNZ", type:"フデ"},
+  {No:74, name:"リッター4K", type:"チャージャー"},
+  {No:75, name:"リッター4Kカスタム", type:"チャージャー"},
+  {No:76, name:"4Kスコープカスタム", type:"チャージャー"},
+  {No:77, name:"スプラチャージャー", type:"チャージャー"},
+  {No:78, name:"スプラチャージャーコラボ", type:"チャージャー"},
+  {No:79, name:"スプラチャージャーFRST", type:"チャージャー"},
+  {No:80, name:"14式竹筒銃・甲", type:"チャージャー"},
+  {No:81, name:"スクイックリンα", type:"チャージャー"},
+  {No:82, name:"スクイックリンβ", type:"チャージャー"},
+  {No:83, name:"ソイチューバー", type:"チャージャー"},
+  {No:84, name:"ソイチューバーカスタム", type:"チャージャー"},
+  {No:85, name:"スプラスコープ", type:"チャージャー"},
+  {No:86, name:"スプラスコープコラボ", type:"チャージャー"},
+  {No:87, name:"スプラスコープFRST", type:"チャージャー"},
+  {No:88, name:"4Kスコープ", type:"チャージャー"},
+  {No:89, name:"R-PEN/5H", type:"チャージャー"},
+  {No:90, name:"R-PEN/5B", type:"チャージャー"},
+  {No:91, name:"14式竹筒銃・乙", type:"チャージャー"},
+  {No:92, name:"スクリュースロッシャー", type:"スロッシャー"},
+  {No:93, name:"スクリュースロッシャーネオ", type:"スロッシャー"},
+  {No:94, name:"エクスプロッシャー", type:"スロッシャー"},
+  {No:95, name:"エクスプロッシャーカスタム", type:"スロッシャー"},
+  {No:96, name:"オーバーフロッシャー", type:"スロッシャー"},
+  {No:97, name:"オーバーフロッシャーデコ", type:"スロッシャー"},
+  {No:98, name:"バケットスロッシャー", type:"スロッシャー"},
+  {No:99, name:"バケットスロッシャーデコ", type:"スロッシャー"},
+  {No:100, name:"ヒッセン", type:"スロッシャー"},
+  {No:101, name:"ヒッセン・ヒュー", type:"スロッシャー"},
+  {No:102, name:"ヒッセンASH", type:"スロッシャー"},
+  {No:103, name:"モップリン", type:"スロッシャー"},
+  {No:104, name:"モップリンD", type:"スロッシャー"},
+  {No:105, name:"モップリン角", type:"スロッシャー"},
+  {No:106, name:"ハイドラント", type:"スピナー"},
+  {No:107, name:"ハイドラント圧", type:"スピナー"},
+  {No:108, name:"クーゲルシュライバー", type:"スピナー"},
+  {No:109, name:"クーゲルシュライバー・ヒュー", type:"スピナー"},
+  {No:110, name:"スプラスピナー", type:"スピナー"},
+  {No:111, name:"スプラスピナーコラボ", type:"スピナー"},
+  {No:112, name:"スプラスピナーPYTN", type:"スピナー"},
+  {No:113, name:"ノーチラス47", type:"スピナー"},
+  {No:114, name:"ノーチラス79", type:"スピナー"},
+  {No:115, name:"バレルスピナー", type:"スピナー"},
+  {No:116, name:"バレルスピナーデコ", type:"スピナー"},
+  {No:117, name:"イグザミナー", type:"スピナー"},
+  {No:118, name:"イグザミナー・ヒュー", type:"スピナー"},
+  {No:119, name:"ハイドラントカスタム", type:"スピナー"},
+  {No:120, name:"ケルビン525", type:"マニューバー"},
+  {No:121, name:"ケルビン525デコ", type:"マニューバー"},
+  {No:122, name:"クアッドホッパーブラック", type:"マニューバー"},
+  {No:123, name:"クアッドホッパーホワイト", type:"マニューバー"},
+  {No:124, name:"スパッタリー", type:"マニューバー"},
+  {No:125, name:"スパッタリー・ヒュー", type:"マニューバー"},
+  {No:126, name:"スパッタリーOWL", type:"マニューバー"},
+  {No:127, name:"スプラマニューバー", type:"マニューバー"},
+  {No:128, name:"スプラマニューバーコラボ", type:"マニューバー"},
+  {No:129, name:"スプラマニューバー耀", type:"マニューバー"},
+  {No:130, name:"デュアルスイーパー", type:"マニューバー"},
+  {No:131, name:"デュアルスイーパーカスタム", type:"マニューバー"},
+  {No:132, name:"デュアルスイーパー蹄", type:"マニューバー"},
+  {No:133, name:"ガエンFF", type:"マニューバー"},
+  {No:134, name:"ガエンFFカスタム", type:"マニューバー"},
+  {No:135, name:"スパイガジェット", type:"シェルター"},
+  {No:136, name:"スパイガジェットソレーラ", type:"シェルター"},
+  {No:137, name:"スパイガジェット繚", type:"シェルター"},
+  {No:138, name:"キャンピングシェルター", type:"シェルター"},
+  {No:139, name:"キャンピングシェルターソレーラ", type:"シェルター"},
+  {No:140, name:"キャンピングシェルターCREM", type:"シェルター"},
+  {No:141, name:"パラシェルター", type:"シェルター"},
+  {No:142, name:"パラシェルターソレーラ", type:"シェルター"},
+  {No:143, name:"24式張替傘・甲", type:"シェルター"},
+  {No:144, name:"24式張替傘・乙", type:"シェルター"},
+  {No:145, name:"トライストリンガー", type:"ストリンガー"},
+  {No:146, name:"トライストリンガーコラボ", type:"ストリンガー"},
+  {No:147, name:"トライストリンガー燈", type:"ストリンガー"},
+  {No:148, name:"LACT-450", type:"ストリンガー"},
+  {No:149, name:"LACT-450デコ", type:"ストリンガー"},
+  {No:150, name:"LACT-450MILK", type:"ストリンガー"},
+  {No:151, name:"フルイドV", type:"ストリンガー"},
+  {No:152, name:"フルイドVカスタム", type:"ストリンガー"},
+  {No:153, name:"ドライブワイパー", type:"ワイパー"},
+  {No:154, name:"ドライブワイパーデコ", type:"ワイパー"},
+  {No:155, name:"ドライブワイパーRUST", type:"ワイパー"},
+  {No:156, name:"ジムワイパー", type:"ワイパー"},
+  {No:157, name:"ジムワイパー・ヒュー", type:"ワイパー"},
+  {No:158, name:"ジムワイパー封", type:"ワイパー"},
+  {No:159, name:"デンタルワイパーミント", type:"ワイパー"},
+  {No:160, name:"デンタルワイパースミ", type:"ワイパー"}
+];
+
+function createWeaponCell(player, weapon) {
+  const td = document.createElement("td");
+  td.className = "weapon-cell"; // ここで固定サイズクラスを指定
+  td.innerHTML = `
+    <span class="player-name">${player}</span>
+    ${weapon.name}
+    <img class="weapon-img" src="${weapon.No}.png" alt="${weapon.name}">
+  `;
+  return td;
+}
+
+function selectAllWeaponTypes() {
+  document.querySelectorAll(".weaponType").forEach(cb => cb.checked = true);
+}
+
+function deselectAllWeaponTypes() {
+  document.querySelectorAll(".weaponType").forEach(cb => cb.checked = false);
+}
+
+function generateWeapons() {
+  const noDuplicate = document.getElementById("noDuplicate").checked;
+  const teamMode = document.getElementById("teamMode").checked;
+
+  // プレイヤー名を取得
+  const players = [];
+  for (let i = 1; i <= 8; i++) {
+    const name = document.getElementById("player" + i).value || "プレイヤー" + i;
+    players.push(name);
+  }
+
+// 選択された武器種を取得
+const checkedTypes = Array.from(document.querySelectorAll(".weaponType:checked")).map(el => el.value);
+let availableWeapons = weapons.filter(w => checkedTypes.includes(w.type));
+
+if(availableWeapons.length === 0){
+  alert("武器種が1つも選択されていません！");
+  return;
+}
+
+// 武器を選択
+let selectedWeapons = [];
+if(noDuplicate){
+  const shuffledWeapons = [...availableWeapons].sort(() => Math.random() - 0.5);
+  selectedWeapons = shuffledWeapons.slice(0, 8);
+} else {
+  for (let i = 0; i < 8; i++) {
+    const randIndex = Math.floor(Math.random() * availableWeapons.length);
+    selectedWeapons.push(availableWeapons[randIndex]);
+  }
+}
+
+
+  const tableBody = document.getElementById("tableBody");
+  tableBody.innerHTML = ""; // 表クリア
+
+  // 表に反映する関数
+  function createWeaponCell(player, weapon) {
+    const td = document.createElement("td");
+    td.innerHTML = `
+      <span class="player-name">${player}</span>
+      ${weapon.name}
+      <img class="weapon-img" src="${weapon.No}.png" alt="${weapon.name}">
+    `;
+    return td;
+  }
+
+  if(teamMode){
+    // チーム分け
+    const shuffledPlayers = [...players].sort(() => Math.random() - 0.5);
+    const alphaTeam = shuffledPlayers.slice(0,4);
+    const bravoTeam = shuffledPlayers.slice(4,8);
+
+    const alphaWeapons = selectedWeapons.slice(0,4);
+    const bravoWeapons = selectedWeapons.slice(4,8);
+
+    // アルファチーム
+    const alphaRow = document.createElement("tr");
+    const alphaHeader = document.createElement("td");
+    alphaHeader.colSpan = 4;
+    alphaHeader.textContent = "アルファチーム";
+    alphaHeader.className = "alpha";
+    alphaRow.appendChild(alphaHeader);
+    tableBody.appendChild(alphaRow);
+
+    const alphaPlayersRow = document.createElement("tr");
+    for(let i=0;i<4;i++){
+      alphaPlayersRow.appendChild(createWeaponCell(alphaTeam[i], alphaWeapons[i]));
+    }
+    tableBody.appendChild(alphaPlayersRow);
+
+    // ブラボーチーム
+    const bravoRow = document.createElement("tr");
+    const bravoHeader = document.createElement("td");
+    bravoHeader.colSpan = 4;
+    bravoHeader.textContent = "ブラボーチーム";
+    bravoHeader.className = "bravo";
+    bravoRow.appendChild(bravoHeader);
+    tableBody.appendChild(bravoRow);
+
+    const bravoPlayersRow = document.createElement("tr");
+    for(let i=0;i<4;i++){
+      bravoPlayersRow.appendChild(createWeaponCell(bravoTeam[i], bravoWeapons[i]));
+    }
+    tableBody.appendChild(bravoPlayersRow);
+
+  } else {
+    // チーム無し: 2×4表示
+    const row1 = document.createElement("tr");
+    const row2 = document.createElement("tr");
+    for(let i=0;i<8;i++){
+      const td = createWeaponCell(players[i], selectedWeapons[i]);
+      if(i<4) row1.appendChild(td);
+      else row2.appendChild(td);
+    }
+    tableBody.appendChild(row1);
+    tableBody.appendChild(row2);
+  }
+}
+</script>
+
+</body>
+</html>

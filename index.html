@@ -333,8 +333,8 @@ function createWeaponCell(player, weapon) {
   td.className = "weapon-cell";
   td.innerHTML = `
     <span class="player-name">${player}</span>
-    ${weapon.No}
-    <img class="weapon-img" src="${weapon.No}.png" alt="${weapon.name}">
+    ${weapon.name}
+    <img class="weapon-img" src="png/${weapon.No}.png" alt="${weapon.name}">
   `;
   return td;
 }
@@ -379,16 +379,6 @@ if(noDuplicate){
 
   const tableBody = document.getElementById("tableBody");
   tableBody.innerHTML = "";
-
-  function createWeaponCell(player, weapon) {
-    const td = document.createElement("td");
-    td.innerHTML = `
-      <span class="player-name">${player}</span>
-      ${weapon.name}
-      <img class="weapon-img" src="${weapon.No}.png" alt="${weapon.name}">
-    `;
-    return td;
-  }
 
   if(teamMode){
     const shuffledPlayers = [...players].sort(() => Math.random() - 0.5);

@@ -5,7 +5,7 @@
 <title>武器ルーレット</title>
 <style>
     body {
-    text-align: center; /* 全体を中央寄せ */
+    text-align: center;
     font-family: sans-serif;
   }
 
@@ -13,7 +13,7 @@
   border-collapse: collapse;
   margin-top: 20px;
   width: 100%;
-  table-layout: fixed; /* これを追加すると列幅が固定される */
+  table-layout: fixed;
 }
 
   td, th {
@@ -25,17 +25,17 @@
     width: 150px;
     padding: 5px;
     margin: 5px;
-    display: inline-block; /* 横に並べつつ中央寄せ */
+    display: inline-block;
     text-align: center;
   }
 
   button {
-    width: 100%;       /* 実行ボタンを横幅いっぱい */
-    max-width: 400px;  /* 最大幅を制限して見やすく */
+    width: 100%;
+    max-width: 400px;
     padding: 15px;
     font-size: 18px;
-    margin: 10px auto; /* 上下余白、中央寄せ */
-    display: block;    /* 中央寄せにするためブロック要素化 */
+    margin: 10px auto;
+    display: block;
     cursor: pointer;
   }
 
@@ -53,8 +53,7 @@
 .alpha, .bravo {
   font-weight: bold;
   text-align: center;
-  background-color: #FFD700; /* alpha */
-  /* 幅や高さは自動 */
+  background-color: #FFD700;
 }
 
 .bravo {
@@ -70,15 +69,14 @@ img.weapon-img {
 }
 
 .weapon-buttons {
-  text-align: center;      /* 親要素で中央寄せ */
+  text-align: center;
 }
 
 .weapon-buttons button {
-  display: inline-block;   /* ボタンをインライン要素として扱う */
-  margin: 0 5px;           /* ボタン間の間隔を固定 */
+  display: inline-block;
+  margin: 0 5px;
 }
 
-/* 武器セル用 */
 .weapon-cell {
   width: 180px;
   height: 150px;
@@ -86,27 +84,24 @@ img.weapon-img {
   overflow: hidden;
 }
 
-/* チーム見出しセル用 */
 .team-header {
   padding: 10px;
   font-weight: bold;
-  /* 幅や高さは自動 */
 }
 
 button#executeButton {
-  background-color: #aa33ff; /* 目立つ青 */
-  color: white;              /* 文字色は白 */
-  font-weight: bold;          /* 太字 */
-  padding: 15px 20px;         /* 少し大きめに */
-  font-size: 18px;            /* 大きめの文字 */
-  border: none;               /* 枠線なし */
-  border-radius: 5px;         /* 角丸 */
-  cursor: pointer;            /* ホバーで指マーク */
-  width: 100%;                /* ページ横幅いっぱい */
+  background-color: #aa33ff;
+  color: white;
+  font-weight: bold;
+  padding: 15px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
   margin-top: 10px;
 }
 
-/* ホバー時に少し明るく */
 button#executeButton:hover {
   background-color: #8000FF;
 }
@@ -117,7 +112,6 @@ button#executeButton:hover {
 
 <h1>武器ルーレット</h1>
 
-<!-- プレイヤー名入力欄 -->
 <div>
   <input type="text" id="player1" placeholder="プレイヤー1">
   <input type="text" id="player2" placeholder="プレイヤー2">
@@ -162,12 +156,11 @@ button#executeButton:hover {
 <label><input type="checkbox" class="weaponType" value="ワイパー" checked> ワイパー</label>
 
 <br><br>
-<!-- ランダム決定ボタンは独立 -->
+
 <button id="executeButton" onclick="generateWeapons()">実行</button>
 
 <table id="weaponTable">
   <tbody id="tableBody">
-    <!-- ここに動的に内容を表示 -->
   </tbody>
 </table>
 
@@ -337,7 +330,7 @@ const weapons = [
 
 function createWeaponCell(player, weapon) {
   const td = document.createElement("td");
-  td.className = "weapon-cell"; // ここで固定サイズクラスを指定
+  td.className = "weapon-cell";
   td.innerHTML = `
     <span class="player-name">${player}</span>
     ${weapon.name}
@@ -358,14 +351,12 @@ function generateWeapons() {
   const noDuplicate = document.getElementById("noDuplicate").checked;
   const teamMode = document.getElementById("teamMode").checked;
 
-  // プレイヤー名を取得
   const players = [];
   for (let i = 1; i <= 8; i++) {
     const name = document.getElementById("player" + i).value || "プレイヤー" + i;
     players.push(name);
   }
 
-// 選択された武器種を取得
 const checkedTypes = Array.from(document.querySelectorAll(".weaponType:checked")).map(el => el.value);
 let availableWeapons = weapons.filter(w => checkedTypes.includes(w.type));
 
@@ -374,7 +365,6 @@ if(availableWeapons.length === 0){
   return;
 }
 
-// 武器を選択
 let selectedWeapons = [];
 if(noDuplicate){
   const shuffledWeapons = [...availableWeapons].sort(() => Math.random() - 0.5);
@@ -388,9 +378,8 @@ if(noDuplicate){
 
 
   const tableBody = document.getElementById("tableBody");
-  tableBody.innerHTML = ""; // 表クリア
+  tableBody.innerHTML = "";
 
-  // 表に反映する関数
   function createWeaponCell(player, weapon) {
     const td = document.createElement("td");
     td.innerHTML = `
@@ -402,15 +391,11 @@ if(noDuplicate){
   }
 
   if(teamMode){
-    // チーム分け
     const shuffledPlayers = [...players].sort(() => Math.random() - 0.5);
     const alphaTeam = shuffledPlayers.slice(0,4);
     const bravoTeam = shuffledPlayers.slice(4,8);
-
     const alphaWeapons = selectedWeapons.slice(0,4);
     const bravoWeapons = selectedWeapons.slice(4,8);
-
-    // アルファチーム
     const alphaRow = document.createElement("tr");
     const alphaHeader = document.createElement("td");
     alphaHeader.colSpan = 4;
@@ -425,7 +410,6 @@ if(noDuplicate){
     }
     tableBody.appendChild(alphaPlayersRow);
 
-    // ブラボーチーム
     const bravoRow = document.createElement("tr");
     const bravoHeader = document.createElement("td");
     bravoHeader.colSpan = 4;
@@ -441,7 +425,6 @@ if(noDuplicate){
     tableBody.appendChild(bravoPlayersRow);
 
   } else {
-    // チーム無し: 2×4表示
     const row1 = document.createElement("tr");
     const row2 = document.createElement("tr");
     for(let i=0;i<8;i++){

@@ -113,6 +113,11 @@ button#executeButton:hover {
     font-size: 18px; /* 全体の文字を大きく */
   }
 
+  table {
+    width: 100%;
+    table-layout: auto; /* fixedを解除して自動調整 */
+  }
+
   input[type="text"] {
     width: 90%;       /* 横幅を広く */
     margin: 5px auto; /* 中央寄せ */
@@ -121,27 +126,19 @@ button#executeButton:hover {
   }
 
   table td, table th {
-    font-size: 20px;  /* 表の文字を大きく */
+    font-size: 18px;  /* 表の文字を大きく */
   }
 
   .weapon-cell {
-    width: 45%; /* 2列に収まるように % 指定 */
+    width: 23%;  /* 4列に収まるように4等分＋マージン用に少し小さめ */
     height: auto;
-    margin: 5px auto;
-    display: inline-block; /* 横並びを防ぐ */
-  }
-
-  table, tr {
-    display: block; /* テーブルを縦スクロールできるブロック表示に */
-  }
-
-  tr {
-    margin-bottom: 10px;
+    padding: 5px;
+    box-sizing: border-box;
   }
 
   img.weapon-img {
-    max-width: 120px;
-    max-height: 100px;
+    max-width: 100%; /* セル幅に合わせて画像も自動調整 */
+    height: auto;
   }
 
   .weapon-buttons button {
@@ -149,6 +146,10 @@ button#executeButton:hover {
     width: 90%;
     margin: 5px auto;
     font-size: 18px;
+  }
+
+  br {
+    display: none;
   }
 }
     

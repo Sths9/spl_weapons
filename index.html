@@ -116,6 +116,8 @@ button#executeButton:hover {
   table {
     width: 100%;
     table-layout: auto;
+    border-collapse: collapse;
+    font-size: 11px;
   }
 
   input[type="text"] {
@@ -134,7 +136,7 @@ button#executeButton:hover {
     font-size: 18px;
   }
   .weapon-row {
-    display: block; /* 各行をブロック要素にして縦並びに */
+    display: block;
     margin-bottom: 15px;
   }
 
@@ -153,6 +155,11 @@ button#executeButton:hover {
     max-width: 80px;
     max-height: 80px;
     margin-right: 15px;
+  }
+
+  .weapon-img {
+    width: 40px;
+    height: 40px;
   }
 
   .weapon-buttons button {
@@ -174,6 +181,10 @@ button#executeButton:hover {
 
   br {
     display: none;
+  }
+
+  th.team-cell {
+  padding: 6px;
   }
 }
     
@@ -398,17 +409,6 @@ const weapons = [
   {No:159, name:"デンタルワイパーミント", type:"ワイパー"},
   {No:160, name:"デンタルワイパースミ", type:"ワイパー"}
 ];
-
-// function createWeaponCell(player, weapon) {
-//   const td = document.createElement("td");
-//   td.className = "weapon-cell";
-//   td.innerHTML = `
-//     <span class="player-name">${player}</span>
-//     ${weapon.name}
-//     <img class="weapon-img" src="png/${weapon.No}.png" alt="${weapon.name}">
-//   `;
-//   return td;
-// }
 
 function createWeaponCell(player, weapon) {
   const td = document.createElement("td");

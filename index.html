@@ -125,20 +125,34 @@ button#executeButton:hover {
     font-size: 20px;
   }
 
+  #weaponTable {
+    border-collapse: separate;
+    border-spacing: 10px 15px;
+  }
+
   table td, table th {
     font-size: 18px;
   }
-
-  .weapon-cell {
-    width: 23%;
-    height: auto;
-    padding: 5px;
-    box-sizing: border-box;
+  .weapon-row {
+    display: block; /* 各行をブロック要素にして縦並びに */
+    margin-bottom: 15px;
   }
 
-  img.weapon-img {
-    max-width: 100%;
+  .weapon-cell {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
     height: auto;
+    padding: 10px;
+    box-sizing: border-box;
+    text-align: left;
+  }
+
+  .weapon-cell img.weapon-img {
+    max-width: 80px;
+    max-height: 80px;
+    margin-right: 15px;
   }
 
   .weapon-buttons button {
@@ -146,6 +160,16 @@ button#executeButton:hover {
     width: 90%;
     margin: 5px auto;
     font-size: 18px;
+  }
+
+  .weapon-info {
+    flex: 1;
+    font-size: 20px;
+  }
+
+  .player-name {
+    font-size: 22px;
+    margin-bottom: 5px;
   }
 
   br {
@@ -375,14 +399,37 @@ const weapons = [
   {No:160, name:"デンタルワイパースミ", type:"ワイパー"}
 ];
 
+// function createWeaponCell(player, weapon) {
+//   const td = document.createElement("td");
+//   td.className = "weapon-cell";
+//   td.innerHTML = `
+//     <span class="player-name">${player}</span>
+//     ${weapon.name}
+//     <img class="weapon-img" src="png/${weapon.No}.png" alt="${weapon.name}">
+//   `;
+//   return td;
+// }
+
 function createWeaponCell(player, weapon) {
   const td = document.createElement("td");
   td.className = "weapon-cell";
-  td.innerHTML = `
+
+  if (window.innerWidth <= 600) {
+    td.innerHTML = `
+      <img class="weapon-img" src="png/${weapon.No}.png" alt="${weapon.name}">
+      <div class="weapon-info">
+        <span class="player-name">${player}</span>
+        ${weapon.name}
+      </div>
+    `;
+  } else {
+    td.innerHTML = `
     <span class="player-name">${player}</span>
     ${weapon.name}
     <img class="weapon-img" src="png/${weapon.No}.png" alt="${weapon.name}">
   `;
+  }
+
   return td;
 }
 
